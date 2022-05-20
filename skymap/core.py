@@ -548,7 +548,7 @@ class Skymap(Basemap):
         return np.ma.array(smooth,mask=hpxmap.mask)
 
     def draw_hpxmap(self, hpxmap, pixel=None, nside=None, xsize=800,
-                    lonra=None, latra=None, badval=hp.UNSEEN, smooth=None, **kwargs):
+                    lonra=None, latra=None, badval=hp.UNSEEN, smooth=None, nest=False, **kwargs):
         """
         Use pcolor/pcolormesh to draw healpix map.
 
@@ -584,14 +584,16 @@ class Skymap(Basemap):
         #    msg = "'nside' must be specified for explicit maps"
         #    raise Exception(msg)
 
-        vmin,vmax = np.percentile(hpxmap.compressed(),[2.5,97.5])
+        vmin=kwargs.get('vmin',None)
+        vmax=kwargs.get('vmax',None)
+        if vmin is None or vmax is None: vmin,vmax = np.percentile(hpxmap.compressed(),[2.5,97.5])
 
         defaults = dict(latlon=True, rasterized=True, vmin=vmin, vmax=vmax)
         setdefaults(kwargs,defaults)
 
         lon,lat,values = healpix.hpx2xy(hpxmap,pixel=pixel,nside=nside,
                                         xsize=xsize,
-                                        lonra=lonra,latra=latra)
+                                        lonra=lonra,latra=latra, nest=nest)
 
         # pcolormesh doesn't work in Ortho...
         if self.projection == 'ortho':

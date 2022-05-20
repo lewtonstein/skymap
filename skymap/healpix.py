@@ -67,7 +67,7 @@ def get_map_range(hpxmap, pixel=None, nside=None, wrap_angle=180):
     return (lon_min,lon_max), (lat_min,lat_max)
 
 def hpx2xy(hpxmap, pixel=None, nside=None, xsize=800, aspect=1.0,
-           lonra=None, latra=None):
+           lonra=None, latra=None, nest=False):
     """ Convert a healpix map into x,y pixels and values"""
     check_hpxmap(hpxmap,pixel,nside)
 
@@ -94,9 +94,9 @@ def hpx2xy(hpxmap, pixel=None, nside=None, xsize=800, aspect=1.0,
 
     # Old version of healpy
     try:
-        pix = hp.ang2pix(nside,llon,llat,lonlat=True)
+        pix = hp.ang2pix(nside,llon,llat,lonlat=True,nest=nest)
     except TypeError:
-        pix = hp.ang2pix(nside,np.radians(90-llat),np.radians(llon))
+        pix = hp.ang2pix(nside,np.radians(90-llat),np.radians(llon),nest=nest)
 
     if pixel is None:
         values = masked_array(hpxmap[pix])
