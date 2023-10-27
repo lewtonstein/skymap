@@ -13,7 +13,9 @@ warnings.simplefilter("always")
 def masked_array(array,badval=hp.UNSEEN):
     if isinstance(array,np.ma.MaskedArray):
         return array
-    mask = ~np.isfinite(array) | np.in1d(array,badval)
+    print(array.shape)
+    print(np.isin(array,badval))
+    mask = ~np.isfinite(array) | np.isin(array,badval)
     return np.ma.MaskedArray(array,mask=mask)
 
 def check_hpxmap(hpxmap,pixel,nside):
@@ -66,7 +68,7 @@ def get_map_range(hpxmap, pixel=None, nside=None, wrap_angle=180):
 
     return (lon_min,lon_max), (lat_min,lat_max)
 
-def hpx2xy(hpxmap, pixel=None, nside=None, xsize=800, aspect=1.0,
+def hpx2xy(hpxmap, pixel=None, nside=None, xsize=800, ysize=800,
            lonra=None, latra=None, nest=False):
     """ Convert a healpix map into x,y pixels and values"""
     check_hpxmap(hpxmap,pixel,nside)
@@ -78,7 +80,7 @@ def hpx2xy(hpxmap, pixel=None, nside=None, xsize=800, aspect=1.0,
         raise Exception(msg)
 
     lon = np.linspace(lonra[0],lonra[1], xsize)
-    lat = np.linspace(latra[0],latra[1], int(aspect*xsize))
+    lat = np.linspace(latra[0],latra[1], ysize) #int(aspect*xsize))
     lon, lat = np.meshgrid(lon, lat)
 
     # Calculate the value at the average location for pcolormesh
